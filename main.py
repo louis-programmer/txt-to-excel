@@ -18,7 +18,7 @@ output_file = "output.xlsx"
 txt_files = glob.glob("*.txt")
 
 if not txt_files:
-    raise FileNotFoundError("No TXT file found.")
+    raise FileNotFoundError("No TXT file found. (VERSION 3)")
 
 if len(txt_files) > 1:
     raise RuntimeError(
