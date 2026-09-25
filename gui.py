@@ -2,8 +2,16 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import os
 import re
-
+import sys
 from converter import convert_file
+
+def resource_path(filename):
+    if getattr(sys, "frozen", False):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+
+    return os.path.join(base_path, filename)
 
 
 # -----------------------------------
@@ -343,7 +351,7 @@ def convert():
 
 window = tk.Tk()
 
-icon = tk.PhotoImage(file="logo.png")
+icon = tk.PhotoImage(file=resource_path("logo.png"))
 window.iconphoto(True, icon)
 
 
@@ -705,10 +713,8 @@ status_label.pack()
 # BOTTOM-RIGHT LOGO
 # ===================================
 
-logo_image = tk.PhotoImage(
-    file="logo.png"
-)
 
+logo_image = tk.PhotoImage(file=resource_path("logo.png"))
 
 # -----------------------------------
 # Logo safe box
