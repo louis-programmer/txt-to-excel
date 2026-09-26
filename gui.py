@@ -733,7 +733,7 @@ window.iconphoto(True, icon)
 
 
 window.title(
-    "HPS Converter"
+    "HPS Converter - Excel"
 )
 
 
@@ -1092,7 +1092,7 @@ status_label.pack()
 
 #Branding
 logo_image = tk.PhotoImage(file=resource_path("logo.png"))
-logo_image = logo_image.subsample(2, 2)
+logo_image = logo_image.subsample(3, 3)
 # Client Logo
 #logo_image = tk.PhotoImage(file=resource_path("logo.png"))
 
@@ -1114,7 +1114,7 @@ logo_box.place(
     rely=1.0,
     anchor="se",
     x=-15,
-    y=-10
+    y= 0
 )
 
 
@@ -1127,21 +1127,24 @@ logo_label = tk.Label(
     image=logo_image,
     bg="#E8E8E8",
     borderwidth=0
-
-
 )
 
-logo_label.pack()
+logo_label.pack(side="right")
+
+
+# -----------------------------------
+# Powered by
+# -----------------------------------
 
 powered_by_label = tk.Label(
     logo_box,
-    text="Powered by Wilhelm-Clark",
+    text="\u1704\u170F \u1708 Wilhelm-Clark",
     bg="#E8E8E8",
-    font=("Arial", 8)
+    fg="#666666",
+    font=("Arial", 4)
 )
 
-powered_by_label.pack(pady=(3, 0))
-
+powered_by_label.pack(side="left", padx=(0, 8))
 
 # ===================================
 # START GUI
