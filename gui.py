@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 import os
 import re
 import sys
@@ -87,6 +87,322 @@ def get_unique_output_path(output_folder, filename):
         counter += 1
 
     return output_path
+
+
+# -----------------------------------
+# Filename validation
+# -----------------------------------
+
+def has_valid_filename(filename):
+    """
+    Check whether the filename follows
+    the established naming format:
+
+    serial_YYYYMMDD_number.txt
+    """
+
+    return re.match(
+        r"^serial_\d{8}_\d+\.txt$",
+        os.path.basename(filename)
+    ) is not None
+
+
+# -----------------------------------
+# Detect date from filename
+# -----------------------------------
+
+def get_filename_date(filename):
+    """
+    Try to extract a date from a filename.
+
+    Returns:
+        MM/DD/YYYY
+        or None
+    """
+
+    match = re.search(
+        r"serial_(\d{8})",
+        os.path.basename(filename)
+    )
+
+    if not match:
+        return None
+
+    date_text = match.group(1)
+
+    try:
+
+        from datetime import datetime
+
+        return datetime.strptime(
+            date_text,
+            "%Y%m%d"
+        ).strftime("%m/%d/%Y")
+
+    except ValueError:
+
+        return None
+
+# -----------------------------------
+# Ask user for date
+# -----------------------------------
+
+def ask_for_date(filename):
+    """
+    Ask the user to select a date for a
+    filename that does not follow the
+    established naming format.
+
+    Returns:
+        MM/DD/YYYY
+        or None if cancelled.
+    """
+
+    from datetime import datetime
+    import calendar
+
+    dialog = tk.Toplevel(window)
+
+    dialog.title("Select File Date")
+    dialog.geometry("420x260")
+    dialog.resizable(False, False)
+
+    dialog.configure(
+        bg=BG_COLOR
+    )
+
+    dialog.transient(window)
+    dialog.grab_set()
+
+    result = {
+        "date": None
+    }
+
+    # -----------------------------------
+    # Title
+    # -----------------------------------
+
+    title = tk.Label(
+        dialog,
+        text="Filename Date Required",
+        font=(
+            "Arial",
+            15,
+            "bold"
+        ),
+        bg=PURPLE,
+        fg=WHITE
+    )
+
+    title.pack(
+        fill="x",
+        pady=(0, 15),
+        ipady=8
+    )
+
+    # -----------------------------------
+    # Filename
+    # -----------------------------------
+
+    filename_label = tk.Label(
+        dialog,
+        text=(
+            "The filename does not follow the\n"
+            "expected format:\n\n"
+            "serial_YYYYMMDD_number.txt\n\n"
+            f"File: {filename}"
+        ),
+        font=(
+            "Arial",
+            10
+        ),
+        bg=BG_COLOR,
+        fg=TEXT_COLOR,
+        justify="center"
+    )
+
+    filename_label.pack(
+        pady=(0, 12)
+    )
+
+    # -----------------------------------
+    # Date frame
+    # -----------------------------------
+
+    date_frame = tk.Frame(
+        dialog,
+        bg=BG_COLOR
+    )
+
+    date_frame.pack()
+
+    # -----------------------------------
+    # Current date
+    # -----------------------------------
+
+    now = datetime.now()
+
+    years = list(
+        range(
+            now.year - 5,
+            now.year + 6
+        )
+    )
+
+    months = [
+        f"{month:02d}"
+        for month in range(1, 13)
+    ]
+
+    days = [
+        f"{day:02d}"
+        for day in range(1, 32)
+    ]
+
+    # -----------------------------------
+    # Month
+    # -----------------------------------
+
+    month_var = tk.StringVar(
+        value=f"{now.month:02d}"
+    )
+
+    month_box = ttk.Combobox(
+        date_frame,
+        textvariable=month_var,
+        values=months,
+        width=5,
+        state="readonly"
+    )
+
+    month_box.pack(
+        side="left",
+        padx=3
+    )
+
+    # -----------------------------------
+    # Day
+    # -----------------------------------
+
+    day_var = tk.StringVar(
+        value=f"{now.day:02d}"
+    )
+
+    day_box = ttk.Combobox(
+        date_frame,
+        textvariable=day_var,
+        values=days,
+        width=5,
+        state="readonly"
+    )
+
+    day_box.pack(
+        side="left",
+        padx=3
+    )
+
+    # -----------------------------------
+    # Year
+    # -----------------------------------
+
+    year_var = tk.StringVar(
+        value=str(now.year)
+    )
+
+    year_box = ttk.Combobox(
+        date_frame,
+        textvariable=year_var,
+        values=[str(year) for year in years],
+        width=7,
+        state="readonly"
+    )
+
+    year_box.pack(
+        side="left",
+        padx=3
+    )
+
+    # -----------------------------------
+    # Buttons
+    # -----------------------------------
+
+    button_frame = tk.Frame(
+        dialog,
+        bg=BG_COLOR
+    )
+
+    button_frame.pack(
+        pady=20
+    )
+
+    def use_date():
+
+        try:
+
+            selected = datetime.strptime(
+                f"{year_var.get()}-{month_var.get()}-{day_var.get()}",
+                "%Y-%m-%d"
+            )
+
+        except ValueError:
+
+            messagebox.showerror(
+                "Invalid Date",
+                "Please select a valid date.",
+                parent=dialog
+            )
+
+            return
+
+        result["date"] = selected.strftime(
+            "%m/%d/%Y"
+        )
+
+        dialog.destroy()
+
+    def cancel():
+
+        dialog.destroy()
+
+    cancel_button = tk.Button(
+        button_frame,
+        text="Cancel",
+        command=cancel,
+        width=12,
+        bg=BLUE,
+        fg=WHITE,
+        activebackground=BLUE_DARK,
+        activeforeground=WHITE,
+        relief="flat",
+        cursor="hand2"
+    )
+
+    cancel_button.pack(
+        side="left",
+        padx=5
+    )
+
+    use_button = tk.Button(
+        button_frame,
+        text="Use Date",
+        command=use_date,
+        width=12,
+        bg=PURPLE,
+        fg=WHITE,
+        activebackground=PURPLE_DARK,
+        activeforeground=WHITE,
+        relief="flat",
+        cursor="hand2"
+    )
+
+    use_button.pack(
+        side="left",
+        padx=5
+    )
+
+    window.wait_window(dialog)
+
+    return result["date"]
 
 
 # -----------------------------------
@@ -242,6 +558,62 @@ def convert():
         try:
 
             # -----------------------------------
+            # Determine file date
+            # -----------------------------------
+
+            selected_date = None
+
+            if not has_valid_filename(
+                original_filename
+            ):
+
+                detected_date = get_filename_date(
+                    original_filename
+                )
+
+                if detected_date:
+
+                    use_detected = messagebox.askyesno(
+                        "Filename Format Issue",
+                        (
+                            f"The filename does not follow the "
+                            f"expected format.\n\n"
+                            f"File:\n{original_filename}\n\n"
+                            f"We found this date in the filename:\n"
+                            f"{detected_date}\n\n"
+                            f"Use this date for the conversion?"
+                        )
+                    )
+
+                    if use_detected:
+
+                        selected_date = detected_date
+
+                    else:
+
+                        selected_date = ask_for_date(
+                            original_filename
+                        )
+
+                else:
+
+                    selected_date = ask_for_date(
+                        original_filename
+                    )
+
+
+                # -----------------------------------
+                # User cancelled date selection
+                # -----------------------------------
+
+                if selected_date is None:
+
+                    raise ValueError(
+                        "Date selection was cancelled."
+                    )
+
+
+            # -----------------------------------
             # Create Excel filename
             # -----------------------------------
 
@@ -266,7 +638,8 @@ def convert():
 
             convert_file(
                 input_file,
-                output_file
+                output_file,
+                selected_date
             )
 
             successful += 1

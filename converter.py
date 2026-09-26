@@ -25,7 +25,7 @@ from summary import create_summary
 # Convert TXT to Excel
 # -----------------------------------
 
-def convert_file(input_file, output_file):
+def convert_file(input_file, output_file, selected_date=None):
     """
     Convert one TXT weighing file
     into a formatted Excel file.
@@ -36,7 +36,8 @@ def convert_file(input_file, output_file):
     # -----------------------------------
 
     file_date = get_file_date(
-        input_file
+        input_file,
+        selected_date
     )
 
 

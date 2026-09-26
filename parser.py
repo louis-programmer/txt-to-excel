@@ -7,7 +7,7 @@ from datetime import datetime
 # Get date from filename
 # -----------------------------------
 
-def get_file_date(input_file):
+def get_file_date(input_file, selected_date=None):
     """
     Extract the date from a filename such as:
 
@@ -17,6 +17,9 @@ def get_file_date(input_file):
         08/23/2026
     """
 
+    if selected_date:
+        return selected_date
+    
     filename = os.path.basename(input_file)
 
     filename_match = re.search(
