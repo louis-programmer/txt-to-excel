@@ -723,13 +723,17 @@ def convert():
 # ===================================
 
 window = tk.Tk()
-
+#branding
 icon = tk.PhotoImage(file=resource_path("logo.png"))
+
+#Client
+#icon = tk.PhotoImage(file=resource_path("logo.png"))
+
 window.iconphoto(True, icon)
 
 
 window.title(
-    "TXT to Excel"
+    "HPS Converter"
 )
 
 
@@ -784,7 +788,7 @@ header_frame.pack_propagate(False)
 
 title_label = tk.Label(
     header_frame,
-    text="TXT → EXCEL",
+    text="HPS CONVERTER",
     font=(
         "Arial",
         20,
@@ -1086,8 +1090,12 @@ status_label.pack()
 # BOTTOM-RIGHT LOGO
 # ===================================
 
-
+#Branding
 logo_image = tk.PhotoImage(file=resource_path("logo.png"))
+logo_image = logo_image.subsample(2, 2)
+# Client Logo
+#logo_image = tk.PhotoImage(file=resource_path("logo.png"))
+
 
 # -----------------------------------
 # Logo safe box
@@ -1119,9 +1127,22 @@ logo_label = tk.Label(
     image=logo_image,
     bg="#E8E8E8",
     borderwidth=0
+
+
 )
 
 logo_label.pack()
+
+powered_by_label = tk.Label(
+    logo_box,
+    text="Powered by Wilhelm-Clark",
+    bg="#E8E8E8",
+    font=("Arial", 8)
+)
+
+powered_by_label.pack(pady=(3, 0))
+
+
 # ===================================
 # START GUI
 # ===================================
